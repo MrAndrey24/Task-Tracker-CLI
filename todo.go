@@ -63,6 +63,12 @@ func (todos *Todos) edit(index int, title string) error {
 
 func (todos *Todos) print() {
 	for i, todo := range *todos {
-		fmt.Printf("%d: %s\n", i, todo.Title)
+		status := "Incomplete"
+		completedAt := "N/A"
+		if todo.Completed {
+			status = "Completed"
+			completedAt = todo.CompletedAt.Format(time.RFC1123)
+		}
+		fmt.Printf("%d: %s\n\tStatus: %s\n\tCreated: %s\n\tCompleted: %s\n", i, todo.Title, status, todo.CreatedAt.Format(time.RFC1123), completedAt)
 	}
 }
