@@ -7,10 +7,10 @@ import (
 )
 
 type Todo struct {
-	Title       string
-	Completed   bool
-	CreatedAt   time.Time
-	CompletedAt time.Time
+	Title     string
+	Completed bool
+	CreatedAt time.Time
+	Status    string
 }
 
 type Todos []Todo
@@ -18,7 +18,7 @@ type Todos []Todo
 func (todos *Todos) add(title string) {
 	todo := Todo{
 		Title:     title,
-		Completed: false,
+		Status:    "Progress",
 		CreatedAt: time.Now(),
 	}
 	*todos = append(*todos, todo)
@@ -46,9 +46,9 @@ func (todos *Todos) toggle(index int) error {
 	}
 	(*todos)[index].Completed = !(*todos)[index].Completed
 	if (*todos)[index].Completed {
-		(*todos)[index].CompletedAt = time.Now()
+		(*todos)[index].Status = "Done"
 	} else {
-		(*todos)[index].CompletedAt = time.Time{}
+		(*todos)[index].Status = "Progress"
 	}
 	return nil
 }
@@ -63,12 +63,9 @@ func (todos *Todos) edit(index int, title string) error {
 
 func (todos *Todos) print() {
 	for i, todo := range *todos {
-		status := "Incomplete"
-		completedAt := "N/A"
 		if todo.Completed {
-			status = "Completed"
-			completedAt = todo.CompletedAt.Format(time.RFC1123)
+			todo.Status = "Progress"
 		}
-		fmt.Printf("%d: %s\n\tStatus: %s\n\tCreated: %s\n\tCompleted: %s\n", i, todo.Title, status, todo.CreatedAt.Format(time.RFC1123), completedAt)
+		fmt.Printf("ID: %d\n\tTitle: %s\n\tCreated: %s\n\tStatus: %s\n", i, todo.Title, todo.CreatedAt.Format(time.RFC1123), todo.Status)
 	}
 }
