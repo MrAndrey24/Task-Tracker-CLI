@@ -1,8 +1,20 @@
 [
   {
     "Title": "Hello Andrey",
+    "Completed": true,
+    "CreatedAt": "2024-09-17T18:19:50.9121257-06:00",
+    "Status": "Done"
+  },
+  {
+    "Title": "I'm batman",
     "Completed": false,
-    "CreatedAt": "2024-09-17T15:50:27.0386333-06:00",
-    "Status": "Progress"
+    "CreatedAt": "2024-09-17T19:03:24.4771609-06:00",
+    "Status": "Not Started"
+  },
+  {
+    "Title": "CR7 or MSS10 ?",
+    "Completed": false,
+    "CreatedAt": "2024-09-17T19:03:43.1543559-06:00",
+    "Status": "Not Started"
   }
 ]

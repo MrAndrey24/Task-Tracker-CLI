@@ -9,20 +9,29 @@ import (
 )
 
 type CmdFlags struct {
-	Add    string
-	Del    int
-	Edit   string
-	Toggle int
-	List   bool
+	Add            string
+	Del            int
+	Edit           string
+	MarkInProgress int
+	MarkInDone     int
+	List           bool
 }
 
 func NewCmdFlags() *CmdFlags {
-	cf := CmdFlags{}
+	cf := CmdFlags{
+		Add:            "",
+		Del:            -1,
+		Edit:           "",
+		MarkInProgress: -1,
+		MarkInDone:     -1,
+		List:           false,
+	}
 
 	flag.StringVar(&cf.Add, "add", "", "Add a new todo specify title")
 	flag.StringVar(&cf.Edit, "update", "", "Edit a todo by index & specify a new title. id:new_title")
 	flag.IntVar(&cf.Del, "del", -1, "Specify todo by index to delete")
-	flag.IntVar(&cf.Toggle, "toggle", -1, "Specify todo by index to toggle complete true/false")
+	flag.IntVar(&cf.MarkInProgress, "progress", -1, "Specify todo by index to mark in progress")
+	flag.IntVar(&cf.MarkInDone, "done", -1, "Specify todo by index to mark in done")
 	flag.BoolVar(&cf.List, "list", false, "List all to-dos")
 
 	flag.Parse()
@@ -37,25 +46,31 @@ func (cf *CmdFlags) Execute(todos *Todos) {
 	case cf.Add != "":
 		todos.add(cf.Add)
 	case cf.Edit != "":
-		parts := strings.SplitN(cf.Edit, ":", 2)
-		if len(parts) != 2 {
-			fmt.Println("Error: Invalid format for edit. Please use index:new_title")
+		if index, newTitle, err := parseEdit(cf.Edit); err != nil {
+			fmt.Println(err)
 			os.Exit(1)
+		} else {
+			todos.edit(index, newTitle)
 		}
-		index, err := strconv.Atoi(parts[0])
-		if err != nil {
-			fmt.Println("Error: Invalid index for edit.")
-			os.Exit(1)
-
-		}
-		todos.edit(index, parts[1])
-	case cf.Toggle != -1:
-		todos.toggle(cf.Toggle)
-
+	case cf.MarkInProgress != -1:
+		todos.markInProgress(cf.MarkInProgress)
+	case cf.MarkInDone != -1:
+		todos.markInDone(cf.MarkInDone)
 	case cf.Del != -1:
 		todos.delete(cf.Del)
-
 	default:
 		fmt.Println("Invalid command")
 	}
+}
+
+func parseEdit(edit string) (int, string, error) {
+	parts := strings.SplitN(edit, ":", 2)
+	if len(parts) != 2 {
+		return 0, "", fmt.Errorf("error: invalid format for edit. Please use index:new_title")
+	}
+	index, err := strconv.Atoi(parts[0])
+	if err != nil {
+		return 0, "", fmt.Errorf("error: invalid index for edit")
+	}
+	return index, parts[1], nil
 }

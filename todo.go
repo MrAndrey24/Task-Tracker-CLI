@@ -18,16 +18,17 @@ type Todos []Todo
 func (todos *Todos) add(title string) {
 	todo := Todo{
 		Title:     title,
-		Status:    "Progress",
+		Status:    "Not Started",
 		CreatedAt: time.Now(),
 	}
 	*todos = append(*todos, todo)
 }
 
-func (todos *Todos) validateIndex(index int) error {
-	if index >= 0 && index < len(*todos) {
-		err := errors.New("Index out of range")
+func (t *Todos) validateIndex(index int) error {
+	if index < 0 || index >= len(*t) {
+		err := errors.New("index out of range")
 		fmt.Println(err.Error())
+		return err
 	}
 	return nil
 }
@@ -40,16 +41,21 @@ func (todos *Todos) delete(index int) error {
 	return nil
 }
 
-func (todos *Todos) toggle(index int) error {
+func (todos *Todos) markInDone(index int) error {
 	if err := todos.validateIndex(index); err != nil {
 		return err
 	}
-	(*todos)[index].Completed = !(*todos)[index].Completed
-	if (*todos)[index].Completed {
-		(*todos)[index].Status = "Done"
-	} else {
-		(*todos)[index].Status = "Progress"
+	(*todos)[index].Completed = true
+	(*todos)[index].Status = "Done"
+	return nil
+}
+
+func (todos *Todos) markInProgress(index int) error {
+	if err := todos.validateIndex(index); err != nil {
+		return err
 	}
+	(*todos)[index].Completed = false
+	(*todos)[index].Status = "Progress"
 	return nil
 }
 
