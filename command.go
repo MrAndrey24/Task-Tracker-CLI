@@ -53,9 +53,9 @@ func (cf *CmdFlags) Execute(todos *Todos) {
 			todos.edit(index, newTitle)
 		}
 	case cf.MarkInProgress != -1:
-		todos.markInProgress(cf.MarkInProgress)
+		todos.markProgress(cf.MarkInProgress)
 	case cf.MarkInDone != -1:
-		todos.markInDone(cf.MarkInDone)
+		todos.markDone(cf.MarkInDone)
 	case cf.Del != -1:
 		todos.delete(cf.Del)
 	default:

@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -22,6 +23,8 @@ func (todos *Todos) add(title string) {
 		CreatedAt: time.Now(),
 	}
 	*todos = append(*todos, todo)
+
+	fmt.Println("Task added successfully ID: " + strconv.Itoa(len(*todos)-1))
 }
 
 func (t *Todos) validateIndex(index int) error {
@@ -38,24 +41,27 @@ func (todos *Todos) delete(index int) error {
 		return err
 	}
 	*todos = append((*todos)[:index], (*todos)[index+1:]...)
+	fmt.Println("Task deleted successfully")
 	return nil
 }
 
-func (todos *Todos) markInDone(index int) error {
+func (todos *Todos) markDone(index int) error {
 	if err := todos.validateIndex(index); err != nil {
 		return err
 	}
 	(*todos)[index].Completed = true
 	(*todos)[index].Status = "Done"
+	fmt.Println("Task marked as done successfully")
 	return nil
 }
 
-func (todos *Todos) markInProgress(index int) error {
+func (todos *Todos) markProgress(index int) error {
 	if err := todos.validateIndex(index); err != nil {
 		return err
 	}
 	(*todos)[index].Completed = false
-	(*todos)[index].Status = "Progress"
+	(*todos)[index].Status = "In Progress"
+	fmt.Println("Task marked as in progress successfully")
 	return nil
 }
 
@@ -64,14 +70,12 @@ func (todos *Todos) edit(index int, title string) error {
 		return err
 	}
 	(*todos)[index].Title = title
+	fmt.Println("Task updated successfully")
 	return nil
 }
 
 func (todos *Todos) print() {
 	for i, todo := range *todos {
-		if todo.Completed {
-			todo.Status = "Progress"
-		}
 		fmt.Printf("ID: %d\n\tTitle: %s\n\tCreated: %s\n\tStatus: %s\n", i, todo.Title, todo.CreatedAt.Format(time.RFC1123), todo.Status)
 	}
 }
