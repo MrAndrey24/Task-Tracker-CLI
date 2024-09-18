@@ -15,6 +15,9 @@ type CmdFlags struct {
 	MarkInProgress int
 	MarkInDone     int
 	List           bool
+	ListNotStarted bool
+	ListInProgress bool
+	ListInDone     bool
 }
 
 func NewCmdFlags() *CmdFlags {
@@ -25,6 +28,9 @@ func NewCmdFlags() *CmdFlags {
 		MarkInProgress: -1,
 		MarkInDone:     -1,
 		List:           false,
+		ListNotStarted: false,
+		ListInProgress: false,
+		ListInDone:     false,
 	}
 
 	flag.StringVar(&cf.Add, "add", "", "Add a new todo specify title")
@@ -33,6 +39,9 @@ func NewCmdFlags() *CmdFlags {
 	flag.IntVar(&cf.MarkInProgress, "progress", -1, "Specify todo by index to mark in progress")
 	flag.IntVar(&cf.MarkInDone, "done", -1, "Specify todo by index to mark in done")
 	flag.BoolVar(&cf.List, "list", false, "List all to-dos")
+	flag.BoolVar(&cf.ListInDone, "list-done", false, "List all to-dos in done")
+	flag.BoolVar(&cf.ListInProgress, "list-progress", false, "List all to-dos in progress")
+	flag.BoolVar(&cf.ListNotStarted, "list-not-started", false, "List all to-dos not started")
 
 	flag.Parse()
 
@@ -42,7 +51,13 @@ func NewCmdFlags() *CmdFlags {
 func (cf *CmdFlags) Execute(todos *Todos) {
 	switch {
 	case cf.List:
-		todos.print()
+		todos.printAll()
+	case cf.ListInDone:
+		todos.printDone()
+	case cf.ListNotStarted:
+		todos.printNotStarted()
+	case cf.ListInProgress:
+		todos.printInProgress()
 	case cf.Add != "":
 		todos.add(cf.Add)
 	case cf.Edit != "":

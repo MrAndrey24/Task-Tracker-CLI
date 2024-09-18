@@ -9,9 +9,9 @@ import (
 
 type Todo struct {
 	Title     string
+	Status    string
 	Completed bool
 	CreatedAt time.Time
-	Status    string
 }
 
 type Todos []Todo
@@ -74,8 +74,34 @@ func (todos *Todos) edit(index int, title string) error {
 	return nil
 }
 
-func (todos *Todos) print() {
+func (todos *Todos) printFiltered(filter func(todo Todo) bool) {
 	for i, todo := range *todos {
-		fmt.Printf("ID: %d\n\tTitle: %s\n\tCreated: %s\n\tStatus: %s\n", i, todo.Title, todo.CreatedAt.Format(time.RFC1123), todo.Status)
+		if filter(todo) {
+			fmt.Printf("ID: %d\n\tTitle: %s\n\tCreated: %s\n\tStatus: %s\n", i, todo.Title, todo.CreatedAt.Format(time.RFC1123), todo.Status)
+		}
 	}
+}
+
+func (todos *Todos) printAll() {
+	todos.printFiltered(func(todo Todo) bool {
+		return true
+	})
+}
+
+func (todos *Todos) printDone() {
+	todos.printFiltered(func(todo Todo) bool {
+		return todo.Completed
+	})
+}
+
+func (todos *Todos) printNotStarted() {
+	todos.printFiltered(func(todo Todo) bool {
+		return !todo.Completed && todo.Status == "Not Started"
+	})
+}
+
+func (todos *Todos) printInProgress() {
+	todos.printFiltered(func(todo Todo) bool {
+		return !todo.Completed && todo.Status == "In Progress"
+	})
 }
